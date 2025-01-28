@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using System.Linq.Expressions;
 
 namespace RYTM_Test_PashininVadim
 {
@@ -54,6 +53,8 @@ namespace RYTM_Test_PashininVadim
         /// Формирует мета-граф по заданному файлу
         /// </summary>
         /// <param name="fileInput"></param>
+        /// <exception cref="FileNotFoundException"></exception>
+        /// <exception cref="ArgumentException"></exception>
         public void FormGraph(string fileInput)
         {
             if (!File.Exists(fileInput)) throw new FileNotFoundException(fileInput);
@@ -111,7 +112,7 @@ namespace RYTM_Test_PashininVadim
                 _edges.Add(new Edge(i, _verticies.First(v => v.Number == start), _verticies.First(v => v.Number == end), value));
             }
 
-            // Выполнение агент-функций
+            // Расчёт агент-функции
             var commands = new List<(string command, int number)>();
             for (int i = NE + 3; i < lines.Length; i++)
                 commands.Add((lines[i], i - NE - 2));
@@ -119,6 +120,11 @@ namespace RYTM_Test_PashininVadim
                 DoCommand(commands, commands.First().number);
         }
 
+        /// <summary>
+        /// Записывает результат работы программы в файл
+        /// </summary>
+        /// <param name="fileOutput">Имя файла для записи результата</param>
+        /// <exception cref="FileNotFoundException"></exception>
         public void WriteGraph(string fileOutput)
         {
             if (fileOutput == string.Empty) throw new FileNotFoundException(fileOutput);
@@ -131,6 +137,11 @@ namespace RYTM_Test_PashininVadim
             }
         }
 
+        /// <summary>
+        /// Метод выполнения правил в агент-функции
+        /// </summary>
+        /// <param name="commands"></param>
+        /// <param name="number"></param>
         private void DoCommand(IList<(string command, int number)> commands, int number)
         {
             if (!commands.Any(c => c.number == number)) return;
